@@ -12,17 +12,25 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Paso1 from "./paso1";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import FormEmpresa from "./formEmpresa";
+import FormDependencia from "./formDependencia";
 
 interface PasosProps {
   paso: number,
-  titulo: string,
   setPaso: (paso: number) => void;
 }
 
-export default function ConveniosPasos({paso, titulo, setPaso}: PasosProps) {
+export default function ConveniosPasos({paso, setPaso}: PasosProps) {
   const navigate = useNavigate();
   
   const [tipoOrganizacion, setTipoOrganizacion] = useState("Empresa");
+  const titulos = ["", 
+    "Asistente para nuevos Convenios", 
+    "Datos de la Organización",
+    "Paso 3",
+    "Paso 4",
+    "Paso 5"
+  ];
 
   return (
     <Box sx={{ padding: { xs: 2, md: 4 } }}>
@@ -45,7 +53,8 @@ export default function ConveniosPasos({paso, titulo, setPaso}: PasosProps) {
               color: "#1e1e2f",
             }}
           >
-            {titulo}
+            
+            {titulos[paso]}
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Paso {paso} de 5
@@ -58,41 +67,13 @@ export default function ConveniosPasos({paso, titulo, setPaso}: PasosProps) {
       )}
 
       {paso === 2 && (
-        <>
-        <h5>Paso 2</h5>
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => console.log(tipoOrganizacion)}
-          sx={{
-            mt: 2,
-            padding: "10px 24px",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            textTransform: "none", // Evita que el texto sea mayúsculas
-          }}
-        >
-          Continuar
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => setPaso(1)}
-          sx={{
-            mt: 2,
-            padding: "10px 24px",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            textTransform: "none", // Evita que el texto sea mayúsculas
-          }}
-        >
-          Regresar
-        </Button>
-        
-        </>
-        
+        tipoOrganizacion === "Empresa" ? (
+          <FormEmpresa setPaso={setPaso}/>
+        ) : tipoOrganizacion === "Dependencia" ? (
+          <FormDependencia setPaso={setPaso}/>
+        ) : tipoOrganizacion === "Persona Fisica" ? ( // <-- La nueva condición
+          <h1>Formulario Persona Física</h1>
+        ) : null
       )}
 
       {paso === 3 && (

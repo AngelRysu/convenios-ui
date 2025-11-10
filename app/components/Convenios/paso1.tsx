@@ -71,7 +71,7 @@ export default function Paso1({setPaso, setTipoOrganizacion, tipoOrganizacion}: 
           onChange={handleChange}
           sx={{
             bgcolor: "white",
-            color: "black",
+            color: "black", 
             minWidth: 300,
             fontWeight: "medium",
             "& .MuiOutlinedInput-notchedOutline": { border: "none" }, // Quita el borde
@@ -80,7 +80,7 @@ export default function Paso1({setPaso, setTipoOrganizacion, tipoOrganizacion}: 
         >
           <MenuItem value="Empresa">Empresa - (Persona Moral)</MenuItem>
           <MenuItem value="Dependencia">Dependencia</MenuItem>
-          <MenuItem value="Persona">Persona Física</MenuItem>
+          <MenuItem value="Persona Fisica">Persona Física</MenuItem>
           {/* Agrega más opciones si es necesario */}
         </Select>
 
