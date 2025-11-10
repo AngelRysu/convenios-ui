@@ -7,14 +7,19 @@ import EditIcon from "@mui/icons-material/EditOutlined";
 import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import FileDownloadIcon from "@mui/icons-material/FileDownloadOutlined";
+import SendIcon from "@mui/icons-material/Send";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 export interface RowMenuProps<T> {
   row: T;
   onVer?: (r: T) => void;
   onEditar?: (r: T) => void;
   onToggleEstado?: (r: T) => void;
-  estado?: "Activo" | "Inactivo";
+  onCancelar?: (r: T) => void;
+  onEnviarRevision?: (r: T) => void;
+  onEnviarValidar?: (r: T) => void;
+  estado?: string;
 }
 
 export function RowMenu<T>({
@@ -22,6 +27,9 @@ export function RowMenu<T>({
   onVer,
   onEditar,
   onToggleEstado,
+  onCancelar,
+  onEnviarRevision,
+  onEnviarValidar,
   estado,
 }: RowMenuProps<T>) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -55,8 +63,29 @@ export function RowMenu<T>({
           </MenuItem>
         )}
 
+        {onEnviarRevision && (
+          <MenuItem onClick={() => { onEnviarRevision(row); close(); }}>
+            <ListItemIcon><SendIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>Enviar a revisión</ListItemText>
+          </MenuItem>
+        )}
+
+        {onEnviarValidar && (
+          <MenuItem onClick={() => { onEnviarValidar(row); close(); }}>
+            <ListItemIcon><AssignmentTurnedInIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>Enviar a validar</ListItemText>
+          </MenuItem>
+        )}
+        
+                {onCancelar && (
+                  <MenuItem onClick={() => { onCancelar(row); close(); }}>
+                    <ListItemIcon><CancelIcon fontSize="small" /></ListItemIcon>
+                    <ListItemText>Cancelar</ListItemText>
+                  </MenuItem>
+                )}
+
         {onToggleEstado && (
-          <MenuItem onClick={() => { onToggleEstado(row) }}>
+          <MenuItem onClick={() => { onToggleEstado(row); close(); }}>
             <ListItemIcon>
               {estado === "Activo"
                 ? <BlockIcon fontSize="small" />
