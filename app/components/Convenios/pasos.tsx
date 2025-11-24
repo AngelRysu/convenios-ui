@@ -14,6 +14,7 @@ import Paso1 from "./paso1";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FormEmpresa from "./formEmpresa";
 import FormDependencia from "./formDependencia";
+import FormPersona from "./FormPersona";
 
 interface PasosProps {
   paso: number,
@@ -72,7 +73,7 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
         ) : tipoOrganizacion === "Dependencia" ? (
           <FormDependencia setPaso={setPaso}/>
         ) : tipoOrganizacion === "Persona Fisica" ? ( // <-- La nueva condición
-          <h1>Formulario Persona Física</h1>
+          <FormPersona setPaso={setPaso}/>
         ) : null
       )}
 

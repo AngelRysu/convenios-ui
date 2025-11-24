@@ -1,9 +1,14 @@
 import {
   Box,
   Typography,
+  Select,
+  MenuItem,
   Button,
   Grid,
   TextField,
+  FormControl,
+  InputLabel,
+  Link,
   IconButton,
   InputAdornment,
 } from "@mui/material";
@@ -11,11 +16,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import pkg from 'dayjs';
-const {Dayjs} = pkg;
 
 import { useState,useEffect } from "react";
-// Iconos
+
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -25,29 +28,26 @@ import SelectField from "~/common/TextField/SelectField";
 import { createRecord, getData } from "~/utils/apiUtils";
 import { useAuthContext } from "~/context/AuthContext";
 
-
-
-interface FormDependenciaProps {
+interface FormPersonaProps {
   setPaso: (paso: number) => void;
 }
 
+// Estado inicial del formulario
 const initialState = {
-  razonSocial: "",
+  rfc: "",
   nombreTitular: "",
-  puestoTitular: "",
-  numEscritura: "",
   numIne: "",
+  actividades: "",
+  numEscritura: "",
   calleNumero: "",
   estado: "14",
   municipio: "",
   cp: "",
-  correo: "",
-  telefono: "",
 };
-export default function FormDependencia({ setPaso }: FormDependenciaProps) {
+
+export default function FormPersona({ setPaso }: FormPersonaProps) {
   const [testigos, setTestigos] = useState(['']);
   const [form, setForm] = useState(initialState);
-  const [fechaCreacion, setFechaCreacion] = useState<Dayjs | null>(null);
   const [estados, setEstado] = useState([]);
   const [municipiosDomicilio, setMunicipioDomicilio] = useState([]);
 
@@ -56,9 +56,6 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
   const on = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(s => ({ ...s, [k]: e.target.value }));
 
-  const handleDateChange = (newDate: Dayjs | null) => {
-    setFechaCreacion(newDate.format('YYYY-MM-DD'));
-  };
 
   //testigos
   const handleAddTestigo = () => {
@@ -107,30 +104,49 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
   }
 
   const handleRegister = async () => {
+    if(!form.estado){
+      return setNoti({
+        open: true,
+        type: "error",
+        message: "seleccione un estado",
+      });
+      
+    }
+    const estado_seleccionado = estados.find(opcion => opcion.value === form.estado);
+    if(!form.municipio){
+      return setNoti({
+        open: true,
+        type: "error",
+        message: "seleccione un municipio",
+      });
+    }
+    const municipio_seleccionado = municipiosDomicilio.find(opcion => opcion.value === form.municipio);
+
     const body = {
-    	"rfc": "",
-    	"nombre_Legal": form.razonSocial,
+    	"rfc": form.rfc,
+    	"nombre_Legal": "",
       "nombre_Comercial": "",
       "nombre_Titular": form.nombreTitular,
-      "puesto_Titular": form.puestoTitular,
+      "puesto_Titular": "",
       "numero_Escritura": form.numEscritura,
       "nombre_Notario": "",
       "numero_Notaria": "",
       "municipio_Notaria": "",
       "actividades": "",
       "domicilio_Calle": form.calleNumero,
-      "domicilio_Estado": form.estado,
-      "domicilio_Municipio": form.municipio,
+      "domicilio_Estado": estado_seleccionado.label,
+      "domicilio_Municipio": municipio_seleccionado.label,
       "domicilio_CP": form.cp,
-      "contacto_Telefono": form.telefono,
-      "contacto_Email": form.correo,
+      "contacto_Telefono": "",
+      "contacto_Email": "",
       "oficio_Nombramiento": form.numEscritura,
-      "fecha_Nombramiento": fechaCreacion,
+      "fecha_Nombramiento": null,
       "ine_Representante": "",
       "acta_constitutiva": "",
       "tipo": "Dependencia",
     	"testigos": testigos
     }
+
     const respuesta = await createRecord({ data: body, endpoint: "/organizacion" });
     if(respuesta.statusCode === 201){
       setNoti({
@@ -154,46 +170,31 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
       <Grid container rowSpacing={3} columnSpacing={3}>
         <Grid size={12} sx={{borderBottom: '1px solid #cacacaff'}}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            Información de la Dependencia
+            Información de la Persona Física
           </Typography>
         </Grid>
         <Grid size={12}>
-          <InputField text="Nombre de la Dependencia" type="text" size="100%" onChange={on("razonSocial")}/>
+          <InputField text="Nombre Completo" type="text" size="100%" onChange={on("nombreTitular")}/>
         </Grid>
         <Grid size={6}>
-          <InputField text="Representante Legal de la Dependencia" type="text" size="100%" onChange={on("nombreTitular")}/>
+          <InputField text="RFC" type="text" size="100%" onChange={on("rfc")}/>
         </Grid>
         <Grid size={6}>
-          <InputField text="Puesto del Representante" size="100%" type="text" onChange={on("puestoTitular")}/>
+          <InputField text="Número de INE" type="text" size="100%" onChange={on("numIne")}/>
         </Grid>
         <Grid size={6}>
-          <InputField text="Número de Nombramiento" size="100%" type="text" onChange={on("numEscritura")}/>
+          <InputField text="Número de Acta Constitutiva" type="text" size="100%" onChange={on("numEscritura")}/>
         </Grid>
         <Grid size={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker
-                onChange={handleDateChange}
-                sx={{
-                    width: "100%",
-                    borderRadius: "1dvh",
-                    backgroundColor: "transparent",
-                    transition: "all 0.2s ease",
-                }}
-                label="Fecha del Nombramiento" />
-              </DemoContainer>
-            </LocalizationProvider>
-        </Grid>
-        <Grid size={6}>
-          <InputField text="Número de INE del Representante Legal" size="100%" type="text" onChange={on("numIne")}/>
+          <InputField text="Actividades que Desempeña" type="text" size="100%" onChange={on("actividades")}/>
         </Grid>
         <Grid size={12} sx={{borderBottom: '1px solid #cacacaff'}}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Domicilio de la Dependencia
-            </Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Domicilio
+          </Typography>
         </Grid>
         <Grid size={12}>
-          <InputField text="Calle y Número" type="text" size="100%" onChange={on("calleNumero")}/>
+          <InputField text="Calle y número" type="text" size="100%" onChange={on("calleNumero")}/>
         </Grid>
         <Grid size={6}>
           <Box>
@@ -224,18 +225,7 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
           </Box>
         </Grid>
         <Grid size={6}>
-          <InputField text="Código Postal" type="text" size="100%" onChange={on("cp")} />
-        </Grid>
-        <Grid size={12} sx={{borderBottom: '1px solid #cacacaff'}}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Información de Contacto
-            </Typography>
-        </Grid>
-        <Grid size={6}>
-          <InputField text="Correo Electronio" type="text" size="100%" onChange={on("correo")} />
-        </Grid>
-        <Grid size={6}>
-          <InputField text="Telefono" type="text" size="100%" onChange={on("telefono")} />
+          <InputField text="Código Postal" type="text" size="100%" onChange={on("cp")}/>
         </Grid>
         <Grid size={12} sx={{borderBottom: '1px solid #cacacaff'}}>
           <Typography variant="h6" sx={{ mb: 2 }}>
@@ -264,13 +254,13 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
           </Grid>
         ))}
         <Grid size={12}>
-          <Button
-            startIcon={<AddCircleOutlineIcon />}
-            sx={{ textTransform: "none", mt: 1 }}
-            onClick={() => handleAddTestigo()}
-          >
-            Agregar otro testigo
-          </Button>
+            <Button
+              startIcon={<AddCircleOutlineIcon />}
+              sx={{ textTransform: "none", mt: 1 }}
+              onClick={() => handleAddTestigo()}
+            >
+              Agregar otro testigo
+            </Button>
         </Grid>
         {/* --- BOTONES DE NAVEGACIÓN --- */}
         <Box
@@ -317,5 +307,5 @@ export default function FormDependencia({ setPaso }: FormDependenciaProps) {
         </Box>
       </Grid>
     </Box>
-  );
+  )
 }
