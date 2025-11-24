@@ -28,7 +28,7 @@ export default function ConveniosRegistartion() {
         width: "90%",
         margin: "auto",
       }}>
-        <ConveniosPasos paso={paso} setPaso={setPaso} titulo="Asistente para nuevos Convenios"/>
+        <ConveniosPasos paso={paso} setPaso={setPaso}/>
       </Box>
     </>
   )

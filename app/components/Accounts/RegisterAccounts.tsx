@@ -142,6 +142,7 @@ export default function RegisterAccounts() {
                 <SelectField
                   label="Rol"
                   name="rol"
+                  maxWidth="100%"
                   value={form.rol}
                   onChange={(e) => setForm(s => ({ ...s, rol: (e.target as HTMLInputElement).value }))}
                   options={[
