@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import AuthProvider from "./context/AuthProvider";
+import NotificationProvider from "./context/NotificationProvider";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,7 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <AuthProvider>
-      <Outlet />
+      <NotificationProvider>
+        <Outlet />
+      </NotificationProvider>
     </AuthProvider>
   );
 }
