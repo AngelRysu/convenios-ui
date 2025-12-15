@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosRequestConfig, type ResponseType } from 'axios'; // 1. Importar ResponseType
 import getToken from './getToken';
 
 const ERROR_MAPPING: { [key: number]: { statusCode: number, errorMessage: string } } = {
@@ -12,6 +12,7 @@ interface MakeCallParams {
   endpoint: string;
   data?: any;
   query?: string;
+  responseType?: ResponseType;
 }
 
 const makeCall = async ({
@@ -19,6 +20,7 @@ const makeCall = async ({
   endpoint,
   data,
   query,
+  responseType = 'json',
 }: MakeCallParams) => {
   const tokenData = getToken();
 
@@ -34,16 +36,24 @@ const makeCall = async ({
   const apiKey = import.meta.env.VITE_PUBLIC_API_KEY;
   const domain = import.meta.env.VITE_PUBLIC_URL;
   const url = `${domain}${endpoint}${query || ''}`;
+  
+  const isFormData = data instanceof FormData;
+  
+  const headers: Record<string, string> = {
+    api_key: apiKey!,
+    Authorization: `Bearer ${token}`,
+  };
+  
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const config: AxiosRequestConfig = {
     method,
     url,
-    headers: {
-      api_key: apiKey!,
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers,
     data,
+    responseType: responseType,
   };
 
   try {
@@ -54,8 +64,20 @@ const makeCall = async ({
     };
   } catch (error: any) {
     const statusCode = error.response?.status || 500;
-    const errorMessage = error.response?.data?.message
-      || ERROR_MAPPING[statusCode]?.errorMessage || '¡Error Interno del Servidor!';
+    
+    let errorMessage = '¡Error Interno del Servidor!';
+    
+    if (error.response?.data) {
+        if (responseType === 'arraybuffer' && error.response.data instanceof ArrayBuffer) {
+             try {
+                 const textDecoder = new TextDecoder();
+                 const errorJson = JSON.parse(textDecoder.decode(error.response.data));
+                 errorMessage = errorJson.message || errorMessage;
+             } catch (e) { /* Fallback */ }
+        } else {
+             errorMessage = error.response.data.message || ERROR_MAPPING[statusCode]?.errorMessage || errorMessage;
+        }
+    }
 
     return {
       statusCode,
@@ -67,42 +89,34 @@ const makeCall = async ({
 
 const getData = ({ endpoint, query }: { endpoint: string, query?: string }) => {
   if (!endpoint) {
-    return {
-      ...ERROR_MAPPING[400],
-      data: [],
-    };
+    return { ...ERROR_MAPPING[400], data: [] };
   }
   return makeCall({ method: 'GET', endpoint, query });
 };
 
 const createRecord = ({ data, endpoint }: { data: any, endpoint: string }) => {
-  if (!endpoint) {
-    return {
-      ...ERROR_MAPPING[400],
-      data: [],
-    };
-  }
+  if (!endpoint) { return { ...ERROR_MAPPING[400], data: [] }; }
   return makeCall({ method: 'POST', endpoint, data });
 };
 
 const updateRecord = ({ data, endpoint }: { data: any, endpoint: string }) => {
-  if (!endpoint) {
-    return {
-      ...ERROR_MAPPING[400],
-      data: [],
-    };
-  }
+  if (!endpoint) { return { ...ERROR_MAPPING[400], data: [] }; }
   return makeCall({ method: 'PATCH', endpoint, data });
 };
 
 const deleteRecord = ({ endpoint }: { endpoint: string }) => {
-  if (!endpoint) {
-    return {
-      ...ERROR_MAPPING[400],
-      data: [],
-    };
-  }
+  if (!endpoint) { return { ...ERROR_MAPPING[400], data: [] }; }
   return makeCall({ method: 'DELETE', endpoint });
+};
+
+const getBinaryData = ({ endpoint }: { endpoint: string }) => {
+    if (!endpoint) { return { ...ERROR_MAPPING[400], data: [] }; }
+    
+    return makeCall({ 
+        method: 'GET', 
+        endpoint, 
+        responseType: 'arraybuffer'
+    });
 };
 
 export {
@@ -110,4 +124,5 @@ export {
   createRecord,
   updateRecord,
   deleteRecord,
+  getBinaryData,
 };

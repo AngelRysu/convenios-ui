@@ -15,6 +15,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FormEmpresa from "./formEmpresa";
 import FormDependencia from "./formDependencia";
 import FormPersona from "./FormPersona";
+import Paso4 from "./paso4";
 
 interface PasosProps {
   paso: number,
@@ -25,6 +26,8 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
   const navigate = useNavigate();
   
   const [tipoOrganizacion, setTipoOrganizacion] = useState("Empresa");
+  const [id_conveionio, setId_convenio] = useState<number | null>(null);
+  const [folio, setFolio] = useState<string>("");
   const titulos = ["", 
     "Asistente para nuevos Convenios", 
     "Datos de la Organización",
@@ -113,40 +116,12 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
         </>
       )}
 
-      {paso === 4 && (
-        <>
-          <h5>Paso 4</h5>
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<ArrowForwardIcon />}
-            onClick={() => setPaso(5)}
-            sx={{
-              mt: 2,
-              padding: "10px 24px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              textTransform: "none", // Evita que el texto sea mayúsculas
-            }}
-          >
-            Continuar
-          </Button>
-          <Button
-          variant="contained"
-          color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => setPaso(3)}
-          sx={{
-            mt: 2,
-            padding: "10px 24px",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            textTransform: "none", // Evita que el texto sea mayúsculas
-          }}
-        >
-          Regresar
-        </Button>
-        </>
+      {paso === 4 && id_conveionio !== null && (
+        
+        <Paso4 setPaso={setPaso}
+            folio = {folio}
+            idConvenio = {id_conveionio}
+            tipoOrganizacion = {tipoOrganizacion as any}/>
       )}
 
       {paso === 5 && (
