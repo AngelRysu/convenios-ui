@@ -15,6 +15,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FormEmpresa from "./formEmpresa";
 import FormDependencia from "./formDependencia";
 import FormPersona from "./FormPersona";
+import Paso3 from "./paso3";
 
 interface PasosProps {
   paso: number,
@@ -28,7 +29,7 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
   const titulos = ["", 
     "Asistente para nuevos Convenios", 
     "Datos de la Organización",
-    "Paso 3",
+    "Convenio",
     "Paso 4",
     "Paso 5"
   ];
@@ -64,7 +65,9 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
       </Stack>
 
       {paso === 1 && (
-        <Paso1 setTipoOrganizacion={setTipoOrganizacion} tipoOrganizacion={tipoOrganizacion} setPaso={setPaso} />
+        <>
+          <Paso1 setTipoOrganizacion={setTipoOrganizacion} tipoOrganizacion={tipoOrganizacion} setPaso={setPaso} />
+        </>
       )}
 
       {paso === 2 && (
@@ -79,37 +82,7 @@ export default function ConveniosPasos({paso, setPaso}: PasosProps) {
 
       {paso === 3 && (
         <>
-          <h5>Paso 3</h5>
-          <Button
-            variant="contained"
-            color="primary"
-            endIcon={<ArrowForwardIcon />}
-            onClick={() => setPaso(4)}
-            sx={{
-              mt: 2,
-              padding: "10px 24px",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              textTransform: "none", // Evita que el texto sea mayúsculas
-            }}
-          >
-            Continuar
-          </Button>
-          <Button
-          variant="contained"
-          color="primary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => setPaso(2)}
-          sx={{
-            mt: 2,
-            padding: "10px 24px",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            textTransform: "none", // Evita que el texto sea mayúsculas
-          }}
-        >
-          Regresar
-        </Button>
+          <Paso3 setPaso={setPaso}/>
         </>
       )}
 
