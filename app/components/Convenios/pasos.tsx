@@ -14,6 +14,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FormEmpresa from "./formEmpresa";
 import FormDependencia from "./formDependencia";
 import FormPersona from "./FormPersona";
+import Paso3 from "./paso3";
 
 interface PasosProps {
   paso: number;
@@ -32,7 +33,7 @@ export default function ConveniosPasos({ paso, setPaso }: PasosProps) {
     "",
     "Asistente para nuevos Convenios",
     "Datos de la Organización",
-    "Paso 3",
+    "Convenio",
     "Anexos y Documentos",
     "Paso 5",
   ];
@@ -63,11 +64,9 @@ export default function ConveniosPasos({ paso, setPaso }: PasosProps) {
 
       {/* --- PASO 1: Selección de Tipo --- */}
       {paso === 1 && (
-        <Paso1
-          setTipoOrganizacion={setTipoOrganizacion}
-          tipoOrganizacion={tipoOrganizacion}
-          setPaso={setPaso}
-        />
+        <>
+          <Paso1 setTipoOrganizacion={setTipoOrganizacion} tipoOrganizacion={tipoOrganizacion} setPaso={setPaso} />
+        </>
       )}
 
       {/* --- PASO 2: Formularios (Aquí es donde debes setear el Folio e ID al guardar) --- */}
@@ -93,27 +92,11 @@ export default function ConveniosPasos({ paso, setPaso }: PasosProps) {
 
       {/* --- PASO 3: Otros Datos --- */}
       {paso === 3 && (
-        <Box>
-          <Typography variant="h6">Contenido del Paso 3</Typography>
-          <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={() => setPaso(2)}
-            >
-              Regresar
-            </Button>
-            <Button
-              variant="contained"
-              endIcon={<ArrowForwardIcon />}
-              onClick={() => setPaso(4)}
-            >
-              Continuar
-            </Button>
-          </Stack>
-        </Box>
+        <>
+          <Paso3 setPaso={setPaso}/>
+        </>
       )}
 
-      {/* --- PASO 4: Documentación (Recibe los datos guardados) --- */}
       {paso === 4 && (
         <Paso4 
             setPaso={setPaso}
