@@ -2,6 +2,7 @@ import { Box, Stack, Typography, Button, IconButton, Badge } from "@mui/material
 import { useNavigate } from "react-router";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import ConveniosSearchBar from "./ConveniosSearchBar";
+import NotificationBell from "~/common/Notification/NotificationBell";
 import "./styles/ConveniosSearchBar.css"
 
 interface ConveniosHeaderProps {
@@ -33,33 +34,7 @@ export default function ConveniosHeader({ onSearch }: ConveniosHeaderProps) {
 
         <Stack direction="row" alignItems="center" spacing={2}>
           {/* Icono de notificaciones */}
-          <IconButton
-            sx={{
-              backgroundColor: "#fff",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              borderRadius: "50%",
-              width: 40,
-              height: 40,
-              "&:hover": {
-                backgroundColor: "#f3f4f6",
-              },
-            }}
-          >
-            <Badge
-              color="primary"
-              variant="dot"
-              overlap="circular"
-              sx={{
-                "& .MuiBadge-dot": {
-                  top: "6px",
-                  right: "6px",
-                  backgroundColor: "rgba(51, 23, 156, 0.9)",
-                },
-              }}
-            >
-              <NotificationsNoneOutlinedIcon sx={{ color: "#374151" }} />
-            </Badge>
-          </IconButton>
+          <NotificationBell />
 
           {/* Botón de nuevo convenio */}
           <Button
